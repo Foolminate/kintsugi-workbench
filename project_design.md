@@ -2,8 +2,12 @@
 Goal: A Godot 4.5 portfolio project for visualizing complex algorithms (Advent of Code, Project Euler) using a high-fidelity, enterprise-safe aesthetic.
 This is a living document, subject to updates and recommendations as the project, and it's needs, evolve.
 
+## 0. Instructions
+- Give detailed node configuration instructions, explaininig where settings are in the inspector.
+- Only provide code when asked for. Do not pollute the chat context with constantly refactored code.
+
 ## 1. Visual Identity (Kintsugi Midnight)
-The theme is managed via a global ThemeManager.gd Singleton (Autoload) to ensure consistency across separate problem scenes.
+The theme is managed via a global ThemeManager.gd Singleton (Autoload) to ensure consistency across separate problem scenes. The design is juicy, using extra effects like glow, elastic smoothing, and other effects to create a high-end portfolio feel.
 
 **Color Palette Design Philosophy**
 The Kintsugi Midnight palette is designed to balance aesthetic "soul" with technical clarity. It uses high-contrast focal points against a low-fatigue, desaturated background.
@@ -33,7 +37,8 @@ These follow the standard "Status" color conventions but are shifted into a Past
 - Animation Philosophy: Targeted toward "3Blue1Brown" style smooth interpolation using Godot's Tween and Timer classes to visualize the "thinking" process of algorithms.
 
 ## 3. Roadmap
-- [ ] Implement a grid visualiser
+- [x] Implement theme_manager.gd autoload
+- [x] Implement a grid visualiser
 - [ ] Visualise basic logic in the grid
 - [ ] Camera System: Implementation of a pan/zoom Camera2D to handle high-density maps.
 - [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
@@ -44,6 +49,7 @@ These follow the standard "Status" color conventions but are shifted into a Past
 - PowerShell
 - Godot 4.5
 - GD Script
+- VS Code
 - Github
 
 ## 5. File Structure
@@ -51,24 +57,26 @@ kintsugi-workbench/
 ├── .godot/
 ├── .gitignore
 ├── project.godot
-├── core/                    # The "Engine" (Immutable across problems)
+├── core/                     # The "Engine" (Immutable across problems)
 │   ├── theme/
-│   │   ├── ThemeManager.gd  # Autoload: Colors & UI Constants
-│   │   └── MainTheme.tres   # Godot Theme resource
-│   ├── components/          # Reusable UI Nodes
-│   │   ├── GridVisualizer.gd
-│   │   ├── GridVisualizer.tscn
-│   │   └── CameraController.gd
+│   │   ├── theme_manager.gd  # Autoload: Colors & UI Constants
+│   │   └── main_theme.tres   # Godot Theme resource
+│   ├── components/           # Reusable UI Nodes
+│   │   ├── grid_visualizer.gd
+│   │   ├── grid_visualizer.tscn
+│   │   └── camera_controller.gd
 │   └── utils/
-│       └── DataBridge.gd    # Connect Python to Godot, possibly a JSON/WebSocket ingestion
-├── problems/                # The "Content" (The Portfolio)
+│       └── data_bridge.gd    # Connect Python to Godot, possibly a JSON/WebSocket ingestion
+├── problems/                 # The "Content" (The Portfolio)
 │   ├── advent_of_code/
-│   │   ├── 2024/
-│   │   │   ├── Day01/
-│   │   │   │   ├── Day01_Solver.gd
-│   │   │   │   └── Day01_Scene.tscn (Instances GridVisualizer)
-│   ├── project_euler/
-│   └── templates/           # Starter files for new problems
+│   │   ├── aoc-2024/
+│   │   │   ├── day01/
+│   │   │   │   ├── day01_example.txt
+│   │   │   │   ├── day01_puzzle.txt
+│   │   │   │   ├── day01_solver.gd
+│   │   │   │   └── day01_scene.tscn (Instances grid_visualizer)
+│   ├── project-euler/
+│   └── templates/            # Starter files for new problems
 └── assets/
 ├── fonts/
 └── branding/

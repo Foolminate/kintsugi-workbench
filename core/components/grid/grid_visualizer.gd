@@ -1,4 +1,3 @@
-@tool
 extends TileMapLayer
 
 @export_group('Grid Dimensions')
@@ -21,15 +20,20 @@ extends TileMapLayer
 		_rebuild_tile_set()
 		_populate_grid()
 
+@onready var cursor: ReferenceRect = $HoverCursor
+
 var hover_pos: Vector2i = Vector2i(-1, -1)
 
 func _ready():
 	_rebuild_tile_set()
 	_populate_grid()
 	RenderingServer.set_default_clear_color(ThemeManager.BACKGROUND)
-	print_debug("Grid Ready: ", grid_width, "x", grid_height, " with cell size ", cell_size)
+	print("Grid Ready: ", grid_width, "x", grid_height)
 
 func _rebuild_tile_set():
+	if cursor:
+		cursor.size = Vector2(cell_size, cell_size)
+
 	if tile_set:
 		var old_source: TileSetSource = tile_set.get_source(0)
 		if old_source is TileSetAtlasSource:
@@ -56,15 +60,10 @@ func _rebuild_tile_set():
 	source.create_tile(Vector2i(0, 0)) # Background
 	source.create_tile(Vector2i(1, 0)) # Selected
 
-	if source.get_tile_at_coords(Vector2i(1,0)) == Vector2i(-1, -1):
-		print_debug("Warning: Tile (1,0) out of bounds of generated texture!")
-	elif source.get_tile_at_coords(Vector2i(1,0)) == Vector2i(1, 0):
-		print_debug("Tile (1,0) correctly created.")
-
 	new_tile_set.add_source(source, 0)
 	self.tile_set = new_tile_set
 
-	print_debug("Tile set rebuilt with cell size ", cell_size)
+	print("Tile set rebuilt with cell size ", cell_size)
 
 func _draw_border(img: Image, rect: Rect2i, color: Color):
 	for i in border_width:
@@ -80,11 +79,21 @@ func _populate_grid():
 			set_cell(Vector2i(x, y), 0, Vector2i(0, 0))
 
 func _process(_delta):
+	if not cursor:
+		return
+
 	var current_map_pos: Vector2i = local_to_map(get_global_mouse_position())
 
-	if current_map_pos != hover_pos:
+	if _is_within_bounds(current_map_pos):
+		if current_map_pos == hover_pos: return
+
 		hover_pos = current_map_pos
-		queue_redraw()
+		var cell_origin: Vector2 = map_to_local(current_map_pos) - (Vector2(cell_size, cell_size) / 2)
+		cursor.move_to(cell_origin)
+
+	elif cursor.is_active:
+		cursor.fade_out()
+		hover_pos = Vector2i(-1, -1)
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -104,11 +113,6 @@ func _toggle_selection(coords: Vector2i):
 	else:
 		set_cell(coords, 0, Vector2i(0, 0)) # Change back to background tile
 	queue_redraw()
-
-func _draw():
-	if _is_within_bounds(hover_pos):
-		var rect: Rect2 = _get_cell_rect(hover_pos)
-		draw_rect(rect, ThemeManager.FOCUS_A, false, border_width)
 
 func _get_cell_rect(coords: Vector2i) -> Rect2:
 	var pos: Vector2 = map_to_local(coords) - (Vector2(cell_size, cell_size) / 2)

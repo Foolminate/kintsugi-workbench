@@ -22,3 +22,7 @@ ThemeManager="*res://core/theme/theme_manager.gd"
 [dotnet]
 
 project/assembly_name="kintsugi-workbench"
+
+[rendering]
+
+viewport/hdr_2d=true

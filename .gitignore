@@ -10,6 +10,8 @@ export_presets.cfg
 *.user
 *.userprefs
 mono_project/
+# Visual Studio Code
+.vscode/
 # OS-specific ignores
 .DS_Store
 Thumbs.db
