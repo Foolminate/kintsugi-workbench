@@ -1,0 +1,15 @@
+# Godot-specific ignores
+.godot/
+/android/
+*.import/
+export_presets.cfg
+# JetBrains/Rider
+.idea/
+*.sln
+*.csproj
+*.user
+*.userprefs
+mono_project/
+# OS-specific ignores
+.DS_Store
+Thumbs.db
