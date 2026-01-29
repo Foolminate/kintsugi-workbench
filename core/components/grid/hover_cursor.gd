@@ -20,6 +20,7 @@ func move_to(coords: Vector2) -> void:
 		is_active = true
 		position = coords
 		move_tween.tween_property(self, "modulate:a", 1.0, 0.1)
+		pulse_tween.play()
 		return
 
 	move_tween.tween_property(self, "position", coords, follow_speed).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
@@ -28,6 +29,7 @@ func fade_out() -> void:
 	is_active = false
 	var fade_tween: Tween = create_tween()
 	fade_tween.tween_property(self, "modulate:a", 0.0, 0.3)
+	pulse_tween.stop()
 
 func _start_pulsing() -> void:
 	pulse_tween = create_tween().set_loops()

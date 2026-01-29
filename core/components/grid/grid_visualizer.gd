@@ -24,6 +24,11 @@ extends TileMapLayer
 
 var hover_pos: Vector2i = Vector2i(-1, -1)
 
+func get_rect() -> Rect2:
+	var map_rect = get_used_rect()
+
+	return Rect2(map_rect.position * cell_size, map_rect.size * cell_size)
+
 func _ready():
 	_rebuild_tile_set()
 	_populate_grid()

@@ -1,0 +1,54 @@
+extends Camera2D
+
+@export_group("Zoom Settings")
+@export var min_zoom: float = 0.1
+@export var max_zoom: float = 5.0
+@export var zoom_speed: float = 0.15
+@export var zoom_duration: float = 0.2
+
+var _target_zoom: float = 1.0
+var _zoom_tween: Tween
+
+func frame_rect(rect: Rect2, padding: float = 100.0, duration: float = zoom_duration) -> void:
+	if rect.size == Vector2.ZERO:
+		return
+
+	# Calculate the zoom
+	var viewport_size = get_viewport_rect().size
+	var usable_space = viewport_size - Vector2(padding, padding) * 2
+	var zoom_x = usable_space.x / rect.size.x
+	var zoom_y = usable_space.y / rect.size.y
+	_target_zoom = clamp(min(zoom_x, zoom_y), min_zoom, max_zoom)
+
+	# Interpolate
+	if _zoom_tween: _zoom_tween.kill()
+	_zoom_tween = create_tween().set_parallel(true)
+	_zoom_tween.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	_zoom_tween.tween_property(self, "zoom", Vector2.ONE * _target_zoom, duration)
+	_zoom_tween.tween_property(self, "global_position", rect.get_center(), duration)
+
+func frame_node(node: Node2D, padding: float = 100.0, duration: float = zoom_duration) -> void:
+	frame_rect(Rect2(node.position, Vector2.ZERO), padding, duration)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE): # Panning
+			global_position -= event.relative / zoom
+	elif event is InputEventMouseButton:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP): # Zoom in
+			_zoom_camera(1.0 + zoom_speed, get_global_mouse_position())
+		elif Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN): # Zoom out
+			_zoom_camera(1.0 - zoom_speed, get_global_mouse_position())
+
+func _zoom_camera(factor: float, focus_point: Vector2) -> void:
+	_target_zoom = clamp(zoom.x * factor, min_zoom, max_zoom)
+
+	var next_zoom = Vector2.ONE * _target_zoom
+	var zoom_ratio = zoom.x / next_zoom.x
+	var target_pos = global_position + (focus_point - global_position) * (1.0 - zoom_ratio)
+
+	if _zoom_tween: _zoom_tween.kill()
+	_zoom_tween = create_tween().set_parallel(true)
+	_zoom_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_zoom_tween.tween_property(self, "zoom", Vector2.ONE * _target_zoom, zoom_duration)
+	_zoom_tween.tween_property(self, "global_position", target_pos, zoom_duration)

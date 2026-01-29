@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://dgnqcdr03m2ed"]
+
+[ext_resource type="Script" uid="uid://bosjr8hgu4ogc" path="res://problems/templates/camera_controller.gd" id="1_j46sy"]
+[ext_resource type="PackedScene" uid="uid://dl22h5lactcuq" path="res://core/components/grid/grid_visualizer.tscn" id="2_rqq8a"]
+
+[node name="AocBase" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+process_callback = 0
+position_smoothing_speed = 10.0
+editor_draw_limits = true
+script = ExtResource("1_j46sy")
+
+[node name="UiLayer" type="CanvasLayer" parent="."]
+
+[node name="GridVisualizer" parent="." instance=ExtResource("2_rqq8a")]
+z_index = -1
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Background" type="ColorRect" parent="BackgroundLayer"]
+visible = false
+z_index = -10
+offset_right = 40.0
+offset_bottom = 40.0
