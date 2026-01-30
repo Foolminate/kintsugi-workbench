@@ -66,17 +66,21 @@ kintsugi-workbench/
 ├── .godot/
 ├── .gitignore
 ├── project.godot
-├── core/                     # The "Engine" (Immutable across problems)
-│   ├── theme/
-│   │   ├── theme_manager.gd  # Autoload: Colors & UI Constants
-│   │   └── main_theme.tres   # Godot Theme resource
-│   ├── components/           # Reusable UI Nodes
-│   │   ├── grid_visualizer.gd
+├── core/                        # The "Engine" (Immutable across problems)
+│   ├── components/              # Reusable UI Nodes
+│   │   ├── grid_visualizer.gd   # Renderer
 │   │   ├── grid_visualizer.tscn
 │   │   └── camera_controller.gd
+│   ├── engine/
+│   │   ├── step.gd
+│   │   ├── orchestrator.gd
+│   │   └── solver.gd
+│   ├── theme/
+│   │   ├── theme_manager.gd     # Autoload: Colors & UI Constants
+│   │   └── main_theme.tres      # Godot Theme resource
 │   └── utils/
-│       └── data_bridge.gd    # Connect Python to Godot, possibly a JSON/WebSocket ingestion
-├── problems/                 # The "Content" (The Portfolio)
+│       └── data_bridge.gd       # Connect Python to Godot, possibly a JSON/WebSocket ingestion
+├── problems/                    # The "Content" (The Portfolio)
 │   ├── advent_of_code/
 │   │   ├── aoc-2024/
 │   │   │   ├── day01/
@@ -85,7 +89,23 @@ kintsugi-workbench/
 │   │   │   │   ├── day01_solver.gd
 │   │   │   │   └── day01_scene.tscn (Instances grid_visualizer)
 │   ├── project-euler/
-│   └── templates/            # Starter files for new problems
+│   └── templates/               # Starter files for new problems
 ├── assets/
 ├── fonts/
 └── branding/
+
+## 6. Architecture: Orchestrator & Command Pattern
+**Philosophy:** Decoupled execution using a "Hot-Swap" workflow. Stateless logic and reversible command logs ("Traces") will be used instead of fragile, live state management.
+
+**Core Components:**
+* **Orchestrator (Controller):** The central hub. Manages the master grid state and listens for input. On grid modification, it triggers a background re-solve and seamlessly swaps the resulting Trace (Hot-Swap).
+* **Solver (Logic):** Pure, stateless reference class. `GridData` $\rightarrow$ `Trace` (Array of Steps).
+* **Conductor (Playback):** The timeline manager. Holds the `Trace`, controls the cursor (index), and pushes updates to the View.
+* **Visualizer (View):** Juicy rendering layer (TileMap/Control). Executes visual commands only.Detects the difference between Play (Interpolated) and Scrub (Instant/Fast) modes to maintain UI responsiveness.Must actively manage/kill tweens on a per-node basis to prevent animation conflicts during rapid timeline scrubbing.
+
+**Data Protocol (`Step`):**
+* **Structure:** A Command object containing `Target`, `Type`, and `Payload`.
+* **Reversibility:** Each step stores an `UndoState` (visual snapshot of the target *before* execution), enabling O(1) scrubbing without logic reconstruction. Metadata is also stored to explain deeper detail like cost, weight, search depth, etc.
+
+**Workflow:**
+Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regenerates Trace $\rightarrow$ Conductor Syncs Timeline $\rightarrow$ Visualizer Renders.

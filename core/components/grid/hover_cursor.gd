@@ -23,7 +23,7 @@ func move_to(coords: Vector2) -> void:
 		pulse_tween.play()
 		return
 
-	move_tween.tween_property(self, "position", coords, follow_speed).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	move_tween.tween_property(self, "position", coords, follow_speed).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func fade_out() -> void:
 	is_active = false
