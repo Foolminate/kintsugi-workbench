@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="PuzzleInput" load_steps=2 format=3 uid="uid://bvmqutetokg7y"]
+
+[ext_resource type="Script" uid="uid://da3lgpr3p4k2t" path="res://core/engine/puzzle_input.gd" id="1_oerx4"]
+
+[resource]
+script = ExtResource("1_oerx4")
+text = "###############
+#.......#....E#
+#.#.###.#.###.#
+#.....#.#...#.#
+#.###.#####.#.#
+#.#.#.......#.#
+#.#.#####.###.#
+#...........#.#
+###.#.#####.#.#
+#...#.....#.#.#
+#.#.#.###.#.#.#
+#.....#...#.#.#
+#.###.#.#.#.#.#
+#S..#.....#...#
+###############"
+metadata/_custom_type_script = "uid://da3lgpr3p4k2t"

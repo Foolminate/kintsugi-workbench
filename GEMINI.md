@@ -17,12 +17,8 @@ The Kintsugi Midnight palette is designed to balance aesthetic "soul" with techn
 - Grid: Charcoal Blue (#2B3B4F) [Grid]: Stepping away from neutral grey, this blue-leaning charcoal maintains the "Prussian" atmosphere. It is distinct enough to be a functional guide but subtle enough to recede once data is populated.
 
 **The "Focal" Duality**
-- Focus A: Metallic Gold (#DCAE1D) [Primary Focus]: Inspired by the Kintsugi art form. This is your "Value" color. It represents the solution, the successful path, or the current active head of an algorithm. Its warmth cuts through the cool background instantly
+- Focus A: Metallic Gold (#DCAE1D) [Primary Focus]: Inspired by the Kintsugi art form. This is your "Value" color. It represents the solution, where the user is pointing, or essential information. Its warmth cuts through the cool background instantly
 - Focus B: Rose Punch (#D93D83) [Secondary Focus]: A nod to the Pythonic "keyword" purple. It represents the "Logic" or "Process." Use this for search frontiers, auxiliary data, or secondary variables that influence the main solution.
-
-**Data Typography**
-- Text Primary: Alice Blue (#E4E8F1): A warm, high-legibility white for primary labels and coordinates.
-- Text Secondary: Light Blue (#99C9D6): A desaturated, lower-contrast blue for headings or secondary metadata (e.g., frame rates, step counts, or "inactive" data) to prevent the UI from feeling cluttered.
 
 **The Color Language**
 These follow the standard "Status" color conventions but are shifted into a deeper Gamut to ensure they don't clash with the primary Gold or overwhelm the dark background.
@@ -32,6 +28,10 @@ These follow the standard "Status" color conventions but are shifted into a deep
 - Purple: Indigo (#54038A): The Future: Visualizes Heuristics and "Queued Nodes." Represents the algorithm’s predicted path or the "frontier" of discovery.
 - Orange: Autumn Ember (#B85000): The Friction: Signals High-Cost Edges, "Heat," or "Flow Pressure." Used for active mutations or high-weight operations.
 - Yelow: Harvest Gold (#D19200): The Spark: Marks the Active Pointer. High-luminance focus indicating exactly where the CPU is currently operating.
+
+**Data Typography**
+- Text Primary: Alice Blue (#E4E8F1): A warm, high-legibility white for primary labels and coordinates.
+- Text Secondary: Light Blue (#99C9D6): A desaturated, lower-contrast blue for headings or secondary metadata (e.g., frame rates, step counts, or "inactive" data) to prevent the UI from feeling cluttered.
 
 **Usage**
 - **The Progress Gradient**: `BLUE` (Visited) $\rightarrow$ `PURPLE` (Queued) $\rightarrow$ `ORANGE` (Processing) $\rightarrow$ `YELLOW` (Current).
@@ -44,16 +44,7 @@ These follow the standard "Status" color conventions but are shifted into a deep
 - Interactivity: to support mouse-to-grid coordinate translation using local_to_map() for "painting" data and testing visual feedback.
 - Animation Philosophy: Targeted toward "3Blue1Brown" style smooth interpolation using Godot's Tween and Timer classes to visualize the "thinking" process of algorithms.
 
-## 3. Roadmap
-- [x] Implement theme_manager.gd autoload
-- [x] Implement a grid visualiser
-- [x] Implement a camera system to zoom and pan
-- [ ] Visualise basic logic in the grid
-- [ ] Camera System: Implementation of a pan/zoom Camera2D to handle high-density maps.
-- [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
-- [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
-
-## 4. Tools
+## 3. Tools
 - Windows 10
 - PowerShell
 - Godot 4.5
@@ -61,7 +52,7 @@ These follow the standard "Status" color conventions but are shifted into a deep
 - VS Code
 - Github
 
-## 5. File Structure
+## 4. File Structure
 kintsugi-workbench/
 ├── .godot/
 ├── .gitignore
@@ -94,7 +85,7 @@ kintsugi-workbench/
 ├── fonts/
 └── branding/
 
-## 6. Architecture: Orchestrator & Command Pattern
+## 5. Architecture: Orchestrator & Command Pattern
 **Philosophy:** Decoupled execution using a "Hot-Swap" workflow. Stateless logic and reversible command logs ("Traces") will be used instead of fragile, live state management.
 
 **Core Components:**
@@ -109,3 +100,23 @@ kintsugi-workbench/
 
 **Workflow:**
 Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regenerates Trace $\rightarrow$ Conductor Syncs Timeline $\rightarrow$ Visualizer Renders.
+
+## 6. Code Style and Preferences
+- @onready is preferred to @export for node variables.
+- Minimize nesting with gaurd clauses and method extraction
+- Tabs are used for indentation—not spaces
+
+## 6. Roadmap
+- [x] Implement theme_manager.gd autoload
+- [x] Implement a grid visualiser
+- [x] Implement a camera system to zoom and pan
+- [ ] Build the "engine":
+  - [x] Step object: A problem state's delta trace element.
+  - [x] Solver: Execute the algorithm and create traces.
+  - [x] Conductor: Controls playback.
+  - [ ] Orchestrator: Listens to user input and coordinates the rest of the engine
+- [ ] Visualise basic logic in the grid
+- [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
+- [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
+
+Let's get into building the engine!
