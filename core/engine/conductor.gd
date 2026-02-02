@@ -74,7 +74,7 @@ func update_trace(new_trace: Array[Step]) -> void:
         _rewind_target_index = divergence_index - 1
         _is_resolving_divergence = true
         _saved_speed = _playback_speed
-        _playback_speed = max(_playback_speed, 5.0) # Accelerated rewind
+        _playback_speed = max(_playback_speed, 50.0) # Accelerated rewind
         play_backward()
     else:
         _trace = new_trace

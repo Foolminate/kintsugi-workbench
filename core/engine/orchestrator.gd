@@ -88,5 +88,6 @@ func _apply_step_visuals(step: Step, is_undo: bool) -> void:
 
 	match step.type:
 		Enums.StepType.GRID_UPDATE:
+			print("Set cell at ", step.target, " to state ", Enums.CellState.keys()[value])
 			grid_visualizer.set_cell_state(step.target, value)
 		# Add other step types here (CAMERA_MOVE, etc.)

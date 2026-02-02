@@ -32,6 +32,7 @@ solver_script = ExtResource("2_r3ld2")
 puzzle_input = SubResource("Resource_fqc0c")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(400, 400)
 process_callback = 0
 position_smoothing_speed = 10.0
 editor_draw_limits = true
