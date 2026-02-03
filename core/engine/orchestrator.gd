@@ -6,6 +6,7 @@ extends Node
 
 @onready var grid_visualizer: GridVisualizer = $GridVisualizer
 @onready var conductor: Conductor = $Conductor
+@onready var playback_controls: PanelContainer = %PlaybackControls
 
 @export_group("Problem Configuration")
 @export var solver_script: Script
@@ -24,12 +25,24 @@ func _ready() -> void:
 	_solver = solver_script.new()
 	assert(_solver is Solver, "Solver script did not instantiate a Solver.")
 
-	conductor.stepped_forward.connect(_on_conductor_stepped_forward)
-	conductor.stepped_backward.connect(_on_conductor_stepped_backward)
-	conductor.divergence_resolution_started.connect(func(): _is_resolving_divergence = true)
-	conductor.divergence_resolution_finished.connect(func(): _is_resolving_divergence = false)
+	conductor.on_stepped_forward.connect(_on_conductor_stepped_forward)
+	conductor.on_stepped_backward.connect(_on_conductor_stepped_backward)
+	conductor.on_divergence_resolution_started.connect(func(): _is_resolving_divergence = true)
+	conductor.on_divergence_resolution_finished.connect(func(): _is_resolving_divergence = false)
+	conductor.on_timeline_changed.connect(func(current_index, total_steps): playback_controls.change_timeline_range(current_index, total_steps))
+	conductor.on_timeline_updated.connect(func(current_index): playback_controls.update_current_step(current_index))
+
+	conductor.on_playback_state_changed.connect(func(is_playing): playback_controls.set_playback_state(is_playing))
+	playback_controls.on_play_pressed.connect(conductor.play)
+	playback_controls.on_pause_pressed.connect(conductor.pause)
+	playback_controls.on_stop_pressed.connect(conductor.stop)
+	playback_controls.on_rewind_pressed.connect(conductor.rewind)
+	playback_controls.on_step_requested.connect(func(index): conductor.seek(index))
+	playback_controls.on_speed_changed.connect(func(speed): conductor.set_playback_speed(speed))
+
 	grid_visualizer.cell_clicked.connect(_on_grid_input)
 
+	playback_controls.set_playback_speed(10.0)
 	var initial_data = _solver.parse_input(puzzle_input.text)
 
 	load_problem(initial_data)

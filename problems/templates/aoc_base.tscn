@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgnqcdr03m2ed"]
+[gd_scene load_steps=6 format=3 uid="uid://dgnqcdr03m2ed"]
 
 [ext_resource type="Script" uid="uid://bosjr8hgu4ogc" path="res://problems/templates/camera_controller.gd" id="1_j46sy"]
 [ext_resource type="Script" uid="uid://oiisyuh2r2tx" path="res://core/engine/orchestrator.gd" id="1_rqq8a"]
 [ext_resource type="PackedScene" uid="uid://dl22h5lactcuq" path="res://core/components/grid/grid_visualizer.tscn" id="2_rqq8a"]
+[ext_resource type="PackedScene" uid="uid://d0l4q4b3pkl8g" path="res://core/components/ui/playback_controls.tscn" id="3_lfe46"]
 [ext_resource type="Script" uid="uid://cm131hj1jnwr4" path="res://core/engine/conductor.gd" id="4_itbju"]
 
 [node name="AocBase" type="Node2D"]
@@ -15,6 +16,9 @@ editor_draw_limits = true
 script = ExtResource("1_j46sy")
 
 [node name="UiLayer" type="CanvasLayer" parent="."]
+
+[node name="PlaybackControls" parent="UiLayer" instance=ExtResource("3_lfe46")]
+unique_name_in_owner = true
 
 [node name="GridVisualizer" parent="." instance=ExtResource("2_rqq8a")]
 z_index = -1
