@@ -60,7 +60,10 @@ func solve(grid: Grid) -> Array[Step]:
 		visited[state_key] = current.cost
 
 		# Trace: Current
-		trace.append(create_step(Enums.StepType.GRID_UPDATE, current.pos, Enums.CellState.ACTIVE, grid.cells.get(current.pos, Enums.CellState.EMPTY)))
+		var current_state = grid.cells.get(current.pos, Enums.CellState.EMPTY)
+		trace.append(create_step(Enums.StepType.GRID_UPDATE, current.pos, Enums.CellState.ACTIVE, current_state))
+		if current_state != Enums.CellState.START and current_state != Enums.CellState.END:
+			grid.cells[current.pos] = Enums.CellState.ACTIVE
 
 		if current.pos == grid.end:
 			final_node = current
@@ -80,12 +83,17 @@ func solve(grid: Grid) -> Array[Step]:
 
 		# Trace: Visited
 		trace.append(create_step(Enums.StepType.GRID_UPDATE, current.pos, Enums.CellState.VISITED, Enums.CellState.ACTIVE))
+		if current_state != Enums.CellState.START:
+			grid.cells[current.pos] = Enums.CellState.VISITED
 
 	# Reconstruct Path
 	if final_node:
 		var ptr = final_node
 		while ptr:
-			trace.append(create_step(Enums.StepType.GRID_UPDATE, ptr.pos, Enums.CellState.ACTIVE, grid.cells.get(ptr.pos, Enums.CellState.EMPTY)))
+			# Now we can trust the grid to hold the correct state (VISITED, QUEUED, etc.)
+			var undo_state = grid.cells.get(ptr.pos, Enums.CellState.EMPTY)
+
+			trace.append(create_step(Enums.StepType.GRID_UPDATE, ptr.pos, Enums.CellState.ACTIVE, undo_state))
 			ptr = ptr.parent
 
 	return trace
@@ -101,7 +109,10 @@ func _try_queue(pq: PriorityQueue, visited: Dictionary, node: SearchNode, trace:
 		return
 
 	pq.push(node.cost, node)
-	trace.append(create_step(Enums.StepType.GRID_UPDATE, node.pos, Enums.CellState.QUEUED, grid_data.get(node.pos, Enums.CellState.EMPTY)))
+	var current_state = grid_data.get(node.pos, Enums.CellState.EMPTY)
+	trace.append(create_step(Enums.StepType.GRID_UPDATE, node.pos, Enums.CellState.QUEUED, current_state))
+	if current_state != Enums.CellState.START:
+		grid_data[node.pos] = Enums.CellState.QUEUED
 
 func _calculate_turn_cost(current_dir: Vector2i, new_dir: Vector2i) -> int:
 	if current_dir == new_dir:

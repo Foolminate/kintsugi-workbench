@@ -29,7 +29,7 @@ func is_empty() -> bool:
 func _sift_up(index: int) -> void:
 	while index > 0:
 		@warning_ignore("integer_division")
-		var parent_index = (index - 1) / 2 # Integer division
+		var parent_index = (index - 1) / 2
 		if _heap[index][0] < _heap[parent_index][0]:
 			_swap(index, parent_index)
 			index = parent_index

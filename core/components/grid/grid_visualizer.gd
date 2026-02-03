@@ -132,7 +132,8 @@ func _process(_delta):
 func _input(event):
 	if not grid: return
 
-	if event is InputEventMouseButton and event.pressed:
+	if not event is InputEventMouseButton or not event.pressed: return
+	if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT:
 		var map_pos: Vector2i = local_to_map(get_local_mouse_position())
 		if grid.is_in_bounds(map_pos):
 			cell_clicked.emit(map_pos, event.button_index)

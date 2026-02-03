@@ -114,8 +114,9 @@ Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regener
   - [x] Step object: A problem state's delta trace element.
   - [x] Solver: Execute the algorithm and create traces.
   - [x] Conductor: Controls playback.
-  - [ ] Orchestrator: Listens to user input and coordinates the rest of the engine
-- [ ] Visualise basic logic in the grid
+  - [x] Orchestrator: Listens to user input and coordinates the rest of the engine
+- [x] Visualise basic logic in the grid
+- [ ] Implement basic UI controls, play, pause, stop, rewind, progress bar, increase/decrease playback speed.
 - [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
 - [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
 

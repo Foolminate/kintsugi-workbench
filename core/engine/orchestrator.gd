@@ -13,6 +13,7 @@ extends Node
 
 var _solver: Solver
 var _grid_data: Grid
+var _is_resolving_divergence: bool = false
 
 func _ready() -> void:
 	assert(grid_visualizer, "No GridVisualizer provided.")
@@ -25,6 +26,8 @@ func _ready() -> void:
 
 	conductor.stepped_forward.connect(_on_conductor_stepped_forward)
 	conductor.stepped_backward.connect(_on_conductor_stepped_backward)
+	conductor.divergence_resolution_started.connect(func(): _is_resolving_divergence = true)
+	conductor.divergence_resolution_finished.connect(func(): _is_resolving_divergence = false)
 	grid_visualizer.cell_clicked.connect(_on_grid_input)
 
 	var initial_data = _solver.parse_input(puzzle_input.text)
@@ -48,7 +51,8 @@ func _trigger_solve(is_initial_load: bool) -> void:
 		return
 
 	# In a real app, this might be run in a thread to avoid freezing the UI
-	var new_trace = _solver.solve(_grid_data)
+	var grid_copy = _clone_grid(_grid_data)
+	var new_trace = _solver.solve(grid_copy)
 
 	if is_initial_load:
 		conductor.load_trace(new_trace)
@@ -57,8 +61,8 @@ func _trigger_solve(is_initial_load: bool) -> void:
 
 ## Handles user input to modify the grid state.
 func _on_grid_input(coords: Vector2i, button_index: int) -> void:
-	# Example logic: Left click = Wall, Right click = Empty
-	# In a real app, this mapping might be configurable via the Solver or a Tool
+	# Left click = Wall, Right click = Empty
+	# TODO: make this configurable
 	var new_state = Enums.CellState.WALL
 	if button_index == MOUSE_BUTTON_RIGHT:
 		new_state = Enums.CellState.EMPTY
@@ -72,6 +76,13 @@ func _on_grid_input(coords: Vector2i, button_index: int) -> void:
 
 	# 3. Trigger a background re-solve (Hot-Swap)
 	_trigger_solve(false)
+
+func _clone_grid(source: Grid) -> Grid:
+	var new_grid = Grid.new(source.width, source.height)
+	new_grid.start = source.start
+	new_grid.end = source.end
+	new_grid.cells = source.cells.duplicate()
+	return new_grid
 
 # --- Playback Handlers ---
 
@@ -88,6 +99,11 @@ func _apply_step_visuals(step: Step, is_undo: bool) -> void:
 
 	match step.type:
 		Enums.StepType.GRID_UPDATE:
+			# If the user has placed a wall, prevent the trace (undo or redo) from overwriting it.
+			if _is_resolving_divergence:
+				if _grid_data.cells.get(step.target, Enums.CellState.EMPTY) == Enums.CellState.WALL and value != Enums.CellState.WALL:
+					return
+
 			print("Set cell at ", step.target, " to state ", Enums.CellState.keys()[value])
 			grid_visualizer.set_cell_state(step.target, value)
 		# Add other step types here (CAMERA_MOVE, etc.)

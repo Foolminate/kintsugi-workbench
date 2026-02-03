@@ -5,6 +5,8 @@ signal stepped_forward(step: Step)
 signal stepped_backward(step: Step)
 signal timeline_updated(current_index: int, total_steps: int)
 signal playback_finished()
+signal divergence_resolution_started()
+signal divergence_resolution_finished()
 
 var _trace: Array[Step] = []
 var _head: int = -1
@@ -29,12 +31,15 @@ func step(direction: int) -> bool:
         if _head >= _trace.size() - 1:
             playback_finished.emit()
             return false
+
         _head += 1
         stepped_forward.emit(_trace[_head])
     else:
         if _head < 0: return false
+
         stepped_backward.emit(_trace[_head])
         _head -= 1
+
     timeline_updated.emit(_head, _trace.size())
 
     return true
@@ -68,13 +73,14 @@ func update_trace(new_trace: Array[Step]) -> void:
             divergence_index = i
             break
 
-	# 2. If we are past the divergence, trigger visual rewind
+	# 2. If we are past the divergence, rewind to before the trace was invalidated
     if _head >= divergence_index:
         _pending_trace = new_trace
         _rewind_target_index = divergence_index - 1
         _is_resolving_divergence = true
         _saved_speed = _playback_speed
         _playback_speed = max(_playback_speed, 50.0) # Accelerated rewind
+        divergence_resolution_started.emit()
         play_backward()
     else:
         _trace = new_trace
@@ -85,6 +91,7 @@ func _stop_divergence_resolution() -> void:
     _playback_speed = _saved_speed
     _trace = _pending_trace
     timeline_updated.emit(_head, _trace.size())
+    divergence_resolution_finished.emit()
 
 func _process(delta: float) -> void:
     if not _is_playing: return
@@ -97,11 +104,8 @@ func _process(delta: float) -> void:
 
         if _is_resolving_divergence and _head <= _rewind_target_index:
             # Stop rewinding and switch to new trace
-            _is_playing = false
-            _is_resolving_divergence = false
-            _playback_speed = _saved_speed
-            _trace = _pending_trace
-            timeline_updated.emit(_head, _trace.size())
+            _stop_divergence_resolution()
+            play_forward()
             return
 
         if not step(_playback_direction):
