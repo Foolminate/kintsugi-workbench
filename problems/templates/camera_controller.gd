@@ -9,6 +9,8 @@ extends Camera2D
 var _target_zoom: float = 1.0
 var _zoom_tween: Tween
 
+# FIX: Zoom to screen pos, not grid pos
+# FIX: center on grid_visualizer on load and resize
 func frame_rect(rect: Rect2, padding: float = 100.0, duration: float = zoom_duration) -> void:
 	if rect.size == Vector2.ZERO:
 		return
@@ -20,7 +22,6 @@ func frame_rect(rect: Rect2, padding: float = 100.0, duration: float = zoom_dura
 	var zoom_y = usable_space.y / rect.size.y
 	_target_zoom = clamp(min(zoom_x, zoom_y), min_zoom, max_zoom)
 
-	# Interpolate
 	if _zoom_tween: _zoom_tween.kill()
 	_zoom_tween = create_tween().set_parallel(true)
 	_zoom_tween.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
@@ -28,7 +29,11 @@ func frame_rect(rect: Rect2, padding: float = 100.0, duration: float = zoom_dura
 	_zoom_tween.tween_property(self, "global_position", rect.get_center(), duration)
 
 func frame_node(node: Node2D, padding: float = 100.0, duration: float = zoom_duration) -> void:
-	frame_rect(Rect2(node.position, Vector2.ZERO), padding, duration)
+	var rect = Rect2()
+	if node.has_method("get_rect"):
+		var local_rect = node.get_rect()
+		rect = node.get_global_transform() * local_rect
+	frame_rect(rect, padding, duration)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:

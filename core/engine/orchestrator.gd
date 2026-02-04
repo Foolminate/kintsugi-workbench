@@ -3,7 +3,9 @@ extends Node
 
 ## The central hub connecting Logic (Solver), Data (Grid), and View (Visualizer).
 ## It manages the "Source of Truth" for the grid and coordinates the hot-swap workflow.
+# TODO: Add configuration for default playback speed, rewind time, etc.
 
+@onready var camera: Camera2D = $Camera2D
 @onready var grid_visualizer: GridVisualizer = $GridVisualizer
 @onready var conductor: Conductor = $Conductor
 @onready var playback_controls: PanelContainer = %PlaybackControls
@@ -17,6 +19,7 @@ var _grid_data: Grid
 var _is_resolving_divergence: bool = false
 
 func _ready() -> void:
+	assert(camera, "No Camera2D provided.")
 	assert(grid_visualizer, "No GridVisualizer provided.")
 	assert(conductor, "No Conductor provided.")
 	assert(solver_script, "No solver script provided.")
@@ -31,9 +34,9 @@ func _ready() -> void:
 	conductor.on_divergence_resolution_finished.connect(func(): _is_resolving_divergence = false)
 	conductor.on_timeline_changed.connect(func(current_index, total_steps): playback_controls.change_timeline_range(current_index, total_steps))
 	conductor.on_timeline_updated.connect(func(current_index): playback_controls.update_current_step(current_index))
-
 	conductor.on_playback_state_changed.connect(func(is_playing): playback_controls.set_playback_state(is_playing))
 	conductor.on_playback_speed_changed.connect(func(new_speed): playback_controls.set_playback_speed(new_speed))
+
 	playback_controls.on_play_pressed.connect(conductor.play)
 	playback_controls.on_pause_pressed.connect(conductor.pause)
 	playback_controls.on_stop_pressed.connect(conductor.stop)
@@ -43,7 +46,12 @@ func _ready() -> void:
 
 	grid_visualizer.cell_clicked.connect(_on_grid_input)
 
+
 	playback_controls.set_playback_speed(10.0)
+	conductor.set_playback_speed(10.0)
+
+	# frame the grid_visualizer on screen resize
+	get_tree().root.size_changed.connect(func(): camera.frame_node(grid_visualizer, 100.0, 0.5))
 	var initial_data = _solver.parse_input(puzzle_input.text)
 
 	load_problem(initial_data)
@@ -56,6 +64,7 @@ func load_problem(initial_grid: Grid) -> void:
 
 	# Initialize the visualizer with the raw state
 	grid_visualizer.initialize_grid(_grid_data)
+	camera.frame_node(grid_visualizer, 100.0, 0.5)
 
 	# Run the initial solution
 	_trigger_solve(true)

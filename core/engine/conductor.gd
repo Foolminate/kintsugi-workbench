@@ -132,6 +132,6 @@ func _process(delta: float) -> void:
             _stop_divergence_resolution()
             return
 
-        if not step(_playback_direction):
-            pause()
-            break
+        if step(_playback_direction): continue
+
+        pause()
