@@ -129,7 +129,7 @@ func _process(_delta):
 		cursor.fade_out()
 		_hover_pos = Vector2i(-1, -1)
 
-func _input(event):
+func _unhandled_input(event):
 	if not grid: return
 
 	if not event is InputEventMouseButton or not event.pressed: return

@@ -66,3 +66,4 @@ unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
 value = 1.0
+allow_greater = true

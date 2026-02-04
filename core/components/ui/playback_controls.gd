@@ -20,7 +20,7 @@ func set_playback_state(playing: bool) -> void:
 	play_pause_button.modulate = Color(1.5, 1.5, 1.5) if playing else Color(1, 1, 1)
 
 func set_playback_speed(speed: float) -> void:
-	speed_selector.value = speed
+	speed_selector.set_value_no_signal(speed)
 
 func update_timeline_range(max_steps: int) -> void:
 	timeline_slider.max_value = max_steps - 1

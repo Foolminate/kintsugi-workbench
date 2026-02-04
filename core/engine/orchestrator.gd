@@ -33,6 +33,7 @@ func _ready() -> void:
 	conductor.on_timeline_updated.connect(func(current_index): playback_controls.update_current_step(current_index))
 
 	conductor.on_playback_state_changed.connect(func(is_playing): playback_controls.set_playback_state(is_playing))
+	conductor.on_playback_speed_changed.connect(func(new_speed): playback_controls.set_playback_speed(new_speed))
 	playback_controls.on_play_pressed.connect(conductor.play)
 	playback_controls.on_pause_pressed.connect(conductor.pause)
 	playback_controls.on_stop_pressed.connect(conductor.stop)
@@ -117,6 +118,6 @@ func _apply_step_visuals(step: Step, is_undo: bool) -> void:
 				if _grid_data.cells.get(step.target, Enums.CellState.EMPTY) == Enums.CellState.WALL and value != Enums.CellState.WALL:
 					return
 
-			print("Set cell at ", step.target, " to state ", Enums.CellState.keys()[value])
+			# print("Set cell at ", step.target, " to state ", Enums.CellState.keys()[value])
 			grid_visualizer.set_cell_state(step.target, value)
 		# Add other step types here (CAMERA_MOVE, etc.)
