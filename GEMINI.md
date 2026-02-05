@@ -110,14 +110,12 @@ Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regener
 - [x] Implement theme_manager.gd autoload
 - [x] Implement a grid visualiser
 - [x] Implement a camera system to zoom and pan
-- [ ] Build the "engine":
+- [x] Build the "engine":
   - [x] Step object: A problem state's delta trace element.
   - [x] Solver: Execute the algorithm and create traces.
   - [x] Conductor: Controls playback.
   - [x] Orchestrator: Listens to user input and coordinates the rest of the engine
 - [x] Visualise basic logic in the grid
-- [ ] Implement basic UI controls, play, pause, stop, rewind, progress bar, increase/decrease playback speed.
+- [x] Implement basic UI controls, play, pause, stop, rewind, progress bar, increase/decrease playback speed.
 - [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
 - [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
-
-Let's get into building the engine!

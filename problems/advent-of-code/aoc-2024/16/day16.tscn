@@ -1,17 +1,23 @@
-[gd_scene load_steps=8 format=3 uid="uid://cjt6ik5w2bq5c"]
+[gd_scene load_steps=10 format=3 uid="uid://cjt6ik5w2bq5c"]
 
 [ext_resource type="Script" uid="uid://oiisyuh2r2tx" path="res://core/engine/orchestrator.gd" id="1_7xwwu"]
 [ext_resource type="Script" uid="uid://cbrg7a0bfixmh" path="res://problems/advent-of-code/aoc-2024/16/day16_solver.gd" id="2_r3ld2"]
 [ext_resource type="Script" uid="uid://bosjr8hgu4ogc" path="res://problems/templates/camera_controller.gd" id="2_tmm2l"]
 [ext_resource type="PackedScene" uid="uid://dl22h5lactcuq" path="res://core/components/grid/grid_visualizer.tscn" id="3_fc6nv"]
 [ext_resource type="Resource" uid="uid://bjby7pjumr8y6" path="res://problems/advent-of-code/aoc-2024/16/day16_puzzle_input.tres" id="3_fqc0c"]
+[ext_resource type="Script" uid="uid://m15f52anl713" path="res://problems/templates/default_settings.gd" id="4_y2524"]
 [ext_resource type="PackedScene" uid="uid://d0l4q4b3pkl8g" path="res://core/components/ui/playback_controls.tscn" id="5_fqc0c"]
 [ext_resource type="Script" uid="uid://cm131hj1jnwr4" path="res://core/engine/conductor.gd" id="6_pf1di"]
+
+[sub_resource type="Resource" id="Resource_y2524"]
+script = ExtResource("4_y2524")
+metadata/_custom_type_script = "uid://m15f52anl713"
 
 [node name="AocBase" type="Node2D"]
 script = ExtResource("1_7xwwu")
 solver_script = ExtResource("2_r3ld2")
 puzzle_input = ExtResource("3_fqc0c")
+settings = SubResource("Resource_y2524")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(400, 400)

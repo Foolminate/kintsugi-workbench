@@ -3,16 +3,16 @@ extends Node
 
 ## The central hub connecting Logic (Solver), Data (Grid), and View (Visualizer).
 ## It manages the "Source of Truth" for the grid and coordinates the hot-swap workflow.
-# TODO: Add configuration for default playback speed, rewind time, etc.
 
 @onready var camera: Camera2D = $Camera2D
 @onready var grid_visualizer: GridVisualizer = $GridVisualizer
 @onready var conductor: Conductor = $Conductor
 @onready var playback_controls: PanelContainer = %PlaybackControls
 
-@export_group("Problem Configuration")
+@export_group("Configuration")
 @export var solver_script: Script
 @export var puzzle_input: PuzzleInput
+@export var settings: DefaultSettings
 
 var _solver: Solver
 var _grid_data: Grid
@@ -24,6 +24,7 @@ func _ready() -> void:
 	assert(conductor, "No Conductor provided.")
 	assert(solver_script, "No solver script provided.")
 	assert(puzzle_input, "No puzzle input provided.")
+	assert(settings, "No DefaultSettings resource provided.")
 
 	_solver = solver_script.new()
 	assert(_solver is Solver, "Solver script did not instantiate a Solver.")
@@ -46,9 +47,10 @@ func _ready() -> void:
 
 	grid_visualizer.cell_clicked.connect(_on_grid_input)
 
-
-	playback_controls.set_playback_speed(10.0)
-	conductor.set_playback_speed(10.0)
+	playback_controls.set_playback_speed(settings.playback_speed)
+	conductor.set_playback_speed(settings.playback_speed)
+	conductor.set_resume_after_rewind(settings.auto_play_new_trace)
+	conductor.set_default_rewind_time(settings.rewind_time)
 
 	# frame the grid_visualizer on screen resize
 	get_tree().root.size_changed.connect(func(): camera.frame_node(grid_visualizer, 100.0, 0.5))
@@ -93,11 +95,11 @@ func _on_grid_input(coords: Vector2i, button_index: int) -> void:
 	# 1. Update the Source of Truth
 	_grid_data.cells[coords] = new_state
 
-	# 2. Update the View immediately (for responsiveness)
+	# 2. Update the View
 	if grid_visualizer:
 		grid_visualizer.set_cell_state(coords, new_state)
 
-	# 3. Trigger a background re-solve (Hot-Swap)
+	# 3. Re-solve in the background and hot-swap
 	_trigger_solve(false)
 
 func _clone_grid(source: Grid) -> Grid:
@@ -127,6 +129,5 @@ func _apply_step_visuals(step: Step, is_undo: bool) -> void:
 				if _grid_data.cells.get(step.target, Enums.CellState.EMPTY) == Enums.CellState.WALL and value != Enums.CellState.WALL:
 					return
 
-			# print("Set cell at ", step.target, " to state ", Enums.CellState.keys()[value])
 			grid_visualizer.set_cell_state(step.target, value)
 		# Add other step types here (CAMERA_MOVE, etc.)

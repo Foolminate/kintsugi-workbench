@@ -1,5 +1,5 @@
 extends Solver
-
+# TODO: Reimplement with C# for better performance
 class SearchNode:
 	var pos: Vector2i
 	var dir: Vector2i
@@ -114,6 +114,7 @@ func _try_queue(pq: PriorityQueue, visited: Dictionary, node: SearchNode, trace:
 	if current_state != Enums.CellState.START:
 		grid_data[node.pos] = Enums.CellState.QUEUED
 
+# TODO: Make this adjustable on the fly, trigger a rewind and divergence resolution if changed mid-playback
 func _calculate_turn_cost(current_dir: Vector2i, new_dir: Vector2i) -> int:
 	if current_dir == new_dir:
 		return 0

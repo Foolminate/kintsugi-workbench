@@ -11,14 +11,14 @@ signal on_playback_speed_changed(new_speed: float)
 signal on_divergence_resolution_started()
 signal on_divergence_resolution_finished()
 
-var DIVERGENCE_REWIND_TIME: float = 2.0 # seconds
-
 var _trace: Array[Step] = []
 var _head: int = -1
 var _is_playing: bool = false
 var _playback_speed: float = 20.0 # Steps per second
 var _playback_direction: int = 1
 var _time_accumulator: float = 0.0
+var _resume_playback_after_rewind: bool = true
+var _divergence_rewind_time: float = 2.0 # Seconds
 
 var _pending_trace: Array[Step] = []
 var _is_resolving_divergence: bool = false
@@ -73,6 +73,12 @@ func rewind() -> void:
 func set_playback_speed(steps_per_second: float) -> void:
     _playback_speed = max(0.001, steps_per_second)
 
+func set_resume_after_rewind(resume: bool) -> void:
+    _resume_playback_after_rewind = resume
+
+func set_default_rewind_time(seconds: float) -> void:
+    _divergence_rewind_time = seconds
+
 func seek(index: int) -> void:
     index = clamp(index, -1, _trace.size() - 1)
     while _head < index:
@@ -101,7 +107,7 @@ func update_trace(new_trace: Array[Step]) -> void:
 
 func _start_divergence_resolution(divergence_index: int) -> void:
     _rewind_target_index = divergence_index - 1
-    var rewind_speed = ceil((_head - _rewind_target_index) / DIVERGENCE_REWIND_TIME) # Aim to rewind in ~2 seconds at 60fps
+    var rewind_speed = ceil((_head - _rewind_target_index) / _divergence_rewind_time) # Aim to rewind in ~2 seconds at 60fps
     _saved_speed = _playback_speed
     _playback_speed = max(_playback_speed, rewind_speed) # Accelerated rewind
     on_playback_speed_changed.emit(_playback_speed)
