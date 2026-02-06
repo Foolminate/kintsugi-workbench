@@ -9,17 +9,23 @@ extends Camera2D
 var _target_zoom: float = 1.0
 var _zoom_tween: Tween
 
-# FIX: Zoom to screen pos, not grid pos
-# FIX: center on grid_visualizer on load and resize
 func frame_rect(rect: Rect2, padding: float = 100.0, duration: float = zoom_duration) -> void:
 	if rect.size == Vector2.ZERO:
 		return
 
-	# Calculate the zoom
-	var viewport_size = get_viewport_rect().size
+	# Use the actual viewport size from the SubViewport
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	# Safety check: If the viewport hasn't initialized its size yet,
+	# wait for the next frame or use a default.
+	if viewport_size.x <= 2:
+		await get_tree().process_frame
+		viewport_size = get_viewport().get_visible_rect().size
+
 	var usable_space = viewport_size - Vector2(padding, padding) * 2
 	var zoom_x = usable_space.x / rect.size.x
 	var zoom_y = usable_space.y / rect.size.y
+
 	_target_zoom = clamp(min(zoom_x, zoom_y), min_zoom, max_zoom)
 
 	if _zoom_tween: _zoom_tween.kill()

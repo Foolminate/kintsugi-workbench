@@ -107,15 +107,17 @@ Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regener
 - Tabs are used for indentation—not spaces
 
 ## 6. Roadmap
-- [x] Implement theme_manager.gd autoload
-- [x] Implement a grid visualiser
-- [x] Implement a camera system to zoom and pan
+- [x] Implement theme_manager.gd autoload.
+- [x] Implement a grid visualiser.
+- [x] Implement a camera system to zoom and pan.
 - [x] Build the "engine":
   - [x] Step object: A problem state's delta trace element.
   - [x] Solver: Execute the algorithm and create traces.
   - [x] Conductor: Controls playback.
-  - [x] Orchestrator: Listens to user input and coordinates the rest of the engine
-- [x] Visualise basic logic in the grid
+  - [x] Orchestrator: Listens to user input and coordinates the rest of the engine.
+- [x] Visualise basic logic in the grid.
 - [x] Implement basic UI controls, play, pause, stop, rewind, progress bar, increase/decrease playback speed.
+- [ ] Use the ThemeManager.gd to create a theme resource to simplify development and ensure visual consistency.
+- [ ] Implement UI for metadata: active position, cost, search depth, queue length, etc.
 - [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
 - [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.

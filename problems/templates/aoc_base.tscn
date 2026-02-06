@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dgnqcdr03m2ed"]
+[gd_scene load_steps=9 format=3 uid="uid://dgnqcdr03m2ed"]
 
 [ext_resource type="Script" uid="uid://bosjr8hgu4ogc" path="res://problems/templates/camera_controller.gd" id="1_j46sy"]
 [ext_resource type="Script" uid="uid://oiisyuh2r2tx" path="res://core/engine/orchestrator.gd" id="1_rqq8a"]
@@ -11,11 +11,55 @@
 script = ExtResource("2_jm3md")
 metadata/_custom_type_script = "uid://m15f52anl713"
 
-[node name="AocBase" type="Node2D"]
+[sub_resource type="Environment" id="Environment_jm3md"]
+background_mode = 3
+background_canvas_max_layer = 10
+glow_enabled = true
+glow_levels/2 = 1.0
+glow_levels/5 = 0.0
+glow_intensity = 1.0
+glow_strength = 1.4
+glow_blend_mode = 0
+
+[node name="AocBase" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_rqq8a")
 settings = SubResource("Resource_u8w4m")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Conductor" type="Node" parent="."]
+script = ExtResource("4_itbju")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+use_hdr_2d = true
+size = Vector2i(1152, 648)
+size_2d_override = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="GridVisualizer" parent="SubViewportContainer/SubViewport" instance=ExtResource("2_rqq8a")]
+unique_name_in_owner = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport"]
+environment = SubResource("Environment_jm3md")
+
+[node name="Camera2D" type="Camera2D" parent="SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
 process_callback = 0
 position_smoothing_speed = 10.0
 editor_draw_limits = true
@@ -23,19 +67,18 @@ script = ExtResource("1_j46sy")
 
 [node name="UiLayer" type="CanvasLayer" parent="."]
 
-[node name="PlaybackControls" parent="UiLayer" instance=ExtResource("3_lfe46")]
+[node name="UiRoot" type="MarginContainer" parent="UiLayer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -55.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PlaybackControls" parent="UiLayer/UiRoot" instance=ExtResource("3_lfe46")]
 unique_name_in_owner = true
+layout_mode = 2
 
-[node name="GridVisualizer" parent="." instance=ExtResource("2_rqq8a")]
-z_index = -1
-
-[node name="BackgroundLayer" type="CanvasLayer" parent="."]
-
-[node name="Background" type="ColorRect" parent="BackgroundLayer"]
-visible = false
-z_index = -10
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Conductor" type="Node" parent="."]
-script = ExtResource("4_itbju")
+[node name="UiWorldEnvironment" type="WorldEnvironment" parent="UiLayer"]
+environment = SubResource("Environment_jm3md")

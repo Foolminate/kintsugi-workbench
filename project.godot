@@ -23,6 +23,10 @@ ThemeManager="*res://core/theme/theme_manager.gd"
 
 project/assembly_name="kintsugi-workbench"
 
+[gui]
+
+theme/custom="uid://byojveo8owfs7"
+
 [input]
 
 camera_pan={

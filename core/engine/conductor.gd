@@ -80,6 +80,7 @@ func set_default_rewind_time(seconds: float) -> void:
     _divergence_rewind_time = seconds
 
 func seek(index: int) -> void:
+    _is_playing = false
     index = clamp(index, -1, _trace.size() - 1)
     while _head < index:
         step(1)
