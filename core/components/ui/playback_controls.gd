@@ -14,8 +14,6 @@ signal on_speed_changed(new_speed: float)
 @onready var stop_button: Button = %StopButton
 
 var is_playing: bool = false
-var _glow: Color = Color(1, 1, 1)
-var _normal: Color = Color(1, 1, 1)
 
 func set_playback_state(playing: bool) -> void:
 	is_playing = playing
@@ -38,13 +36,11 @@ func change_timeline_range(current_index: int, total_steps: int) -> void:
 
 func _play() -> void:
 	play_pause_button.text = "Pause"
-	play_pause_button.modulate = _glow
+	play_pause_button.set_pressed_no_signal(true)
 	play_pause_button.release_focus()
 
 func _pause() -> void:
 	play_pause_button.text = "Play"
-	play_pause_button.modulate = _normal
-	rewind_button.modulate = _normal
 	play_pause_button.release_focus()
 	play_pause_button.set_pressed_no_signal(false)
 
@@ -54,23 +50,14 @@ func _stop() -> void:
 	stop_button.release_focus()
 
 func _reverse() -> void:
-	rewind_button.modulate = _glow
 	on_rewind_pressed.emit()
 	rewind_button.release_focus()
 	play_pause_button.set_pressed_no_signal(true)
-
-func _timeline_focus() -> void:
-	timeline_slider.modulate = _glow
-
-func _timeline_unfocus() -> void:
-	timeline_slider.modulate = _normal
 
 func _ready() -> void:
 	play_pause_button.pressed.connect(_on_play_pause_toggled)
 	stop_button.pressed.connect(_stop)
 	rewind_button.pressed.connect(_reverse)
-	timeline_slider.focus_entered.connect(_timeline_focus)
-	timeline_slider.focus_exited.connect(_timeline_unfocus)
 	timeline_slider.value_changed.connect(func(value): on_step_requested.emit(int(value)))
 	timeline_slider.drag_ended.connect(func(_v): timeline_slider.release_focus())
 	speed_selector.value_changed.connect(func(value): on_speed_changed.emit(value))
