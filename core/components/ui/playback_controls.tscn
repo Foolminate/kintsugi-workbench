@@ -50,10 +50,20 @@ text = "Stop"
 [node name="VSeparator" type="VSeparator" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
+[node name="ElapsedTimeLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0:00"
+
 [node name="TimelineSlider" type="HSlider" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="TotalTimeLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0:00"
 
 [node name="VSeparator2" type="VSeparator" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -61,6 +71,7 @@ layout_mode = 2
 [node name="SpeedLabel" type="Label" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "Steps/s"
 
 [node name="SpeedSelector" type="SpinBox" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
