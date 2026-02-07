@@ -4,7 +4,7 @@ extends Control
 ## The central hub connecting Logic (Solver), Data (Grid), and View (Visualizer).
 ## It manages the "Source of Truth" for the grid and coordinates the hot-swap workflow.
 
-@onready var camera: Camera2D = %Camera2D
+@onready var camera: Camera2D = %CameraMain
 @onready var grid_visualizer: GridVisualizer = %GridVisualizer
 @onready var conductor: Conductor = $Conductor
 @onready var playback_controls: PanelContainer = %PlaybackControls
@@ -53,7 +53,7 @@ func _ready() -> void:
 	conductor.set_default_rewind_time(settings.rewind_time)
 
 	# frame the grid_visualizer on screen resize
-	get_tree().root.size_changed.connect(func(): camera.frame_node(grid_visualizer, 100.0, 0.5))
+	get_tree().root.size_changed.connect(func(): camera.frame_node(grid_visualizer, 100.0))
 	var initial_data = _solver.parse_input(puzzle_input.text)
 
 	load_problem(initial_data)
@@ -66,7 +66,7 @@ func load_problem(initial_grid: Grid) -> void:
 
 	# Initialize the visualizer with the raw state
 	grid_visualizer.initialize_grid(_grid_data)
-	camera.frame_node(grid_visualizer, 100.0, 0.5)
+	camera.frame_node(grid_visualizer, 100.0)
 
 	# Run the initial solution
 	_trigger_solve(true)
