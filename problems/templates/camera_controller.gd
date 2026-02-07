@@ -43,12 +43,12 @@ func frame_node(node: Node2D, padding: float = 100.0, duration: float = zoom_dur
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE): # Panning
+		if Input.is_action_pressed("camera_pan"):
 			global_position -= event.relative / zoom
 	elif event is InputEventMouseButton:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_UP): # Zoom in
+		if event.is_action_pressed("zoom_in"):
 			_zoom_camera(1.0 + zoom_speed, get_global_mouse_position())
-		elif Input.is_mouse_button_pressed(MOUSE_BUTTON_WHEEL_DOWN): # Zoom out
+		elif event.is_action_pressed("zoom_out"):
 			_zoom_camera(1.0 - zoom_speed, get_global_mouse_position())
 
 func _zoom_camera(factor: float, focus_point: Vector2) -> void:
