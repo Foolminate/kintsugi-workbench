@@ -1,7 +1,7 @@
 extends Camera2D
 
 @export_group("Settings")
-@export var smoothing_factor: float = 0.15
+@export var smoothing_factor: float = 15.0
 
 @export_subgroup("Panning")
 @export var pan_speed: float = 1000.0
@@ -24,6 +24,7 @@ func frame_rect(rect: Rect2, padding: float = 100.0) -> void:
 	# Safety check: If the viewport hasn't initialized its size yet,
 	# wait for the next frame or use a default.
 	if viewport_size.x <= 2:
+		print("Warning: Viewport size not initialized. Awaiting next frame.")
 		await get_tree().process_frame
 		viewport_size = get_viewport().get_visible_rect().size
 
@@ -82,6 +83,6 @@ func _process(delta: float) -> void:
 	if (global_position.distance_to(_target_position) < 0.1
 		and abs(zoom.x - _target_zoom) < 0.01
 		and input_vector == Vector2.ZERO):
-		global_position = _target_position
-		zoom = Vector2.ONE * _target_zoom
-		set_process(false)
+			global_position = _target_position
+			zoom = Vector2.ONE * _target_zoom
+			set_process(false)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dgnqcdr03m2ed"]
+[gd_scene load_steps=10 format=3 uid="uid://dgnqcdr03m2ed"]
 
 [ext_resource type="Script" uid="uid://oiisyuh2r2tx" path="res://core/engine/orchestrator.gd" id="1_rqq8a"]
 [ext_resource type="Script" uid="uid://m15f52anl713" path="res://problems/templates/default_settings.gd" id="2_jm3md"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d0l4q4b3pkl8g" path="res://core/components/ui/playback_controls.tscn" id="3_lfe46"]
 [ext_resource type="Script" uid="uid://cm131hj1jnwr4" path="res://core/engine/conductor.gd" id="4_itbju"]
 [ext_resource type="PackedScene" uid="uid://gi5lracyyxia" path="res://core/engine/camera_main.tscn" id="5_jm3md"]
+[ext_resource type="Script" uid="uid://c2sny42vp7n25" path="res://problems/templates/fps_label.gd" id="7_u8w4m"]
 
 [sub_resource type="Resource" id="Resource_u8w4m"]
 script = ExtResource("2_jm3md")
@@ -71,6 +72,12 @@ anchor_bottom = 1.0
 offset_top = -55.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="Label" type="Label" parent="UiLayer/UiRoot"]
+top_level = true
+layout_mode = 2
+size_flags_horizontal = 0
+script = ExtResource("7_u8w4m")
 
 [node name="PlaybackControls" parent="UiLayer/UiRoot" instance=ExtResource("3_lfe46")]
 unique_name_in_owner = true

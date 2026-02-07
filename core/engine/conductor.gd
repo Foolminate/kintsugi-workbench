@@ -55,6 +55,7 @@ func play() -> void:
     _playback_direction = 1
     on_playback_state_changed.emit(_is_playing)
 
+# TODO: pause with spacebar
 func pause() -> void:
     _is_playing = false
     on_playback_state_changed.emit(_is_playing)
@@ -142,3 +143,10 @@ func _process(delta: float) -> void:
         if step(_playback_direction): continue
 
         pause()
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event.is_action_pressed("play_pause"):
+        if _is_playing:
+            pause()
+        else:
+            play()
