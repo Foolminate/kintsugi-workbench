@@ -46,6 +46,7 @@ func _pause() -> void:
 	play_pause_button.modulate = _normal
 	rewind_button.modulate = _normal
 	play_pause_button.release_focus()
+	play_pause_button.set_pressed_no_signal(false)
 
 func _stop() -> void:
 	_pause()
@@ -56,6 +57,7 @@ func _reverse() -> void:
 	rewind_button.modulate = _glow
 	on_rewind_pressed.emit()
 	rewind_button.release_focus()
+	play_pause_button.set_pressed_no_signal(true)
 
 func _timeline_focus() -> void:
 	timeline_slider.modulate = _glow

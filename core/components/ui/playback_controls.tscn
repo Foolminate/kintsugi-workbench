@@ -39,6 +39,7 @@ text = "Rewind"
 [node name="PlayPauseButton" type="Button" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+toggle_mode = true
 text = "Play"
 
 [node name="StopButton" type="Button" parent="MarginContainer/HBoxContainer"]
