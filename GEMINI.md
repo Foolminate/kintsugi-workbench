@@ -117,7 +117,28 @@ Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regener
   - [x] Orchestrator: Listens to user input and coordinates the rest of the engine.
 - [x] Visualise basic logic in the grid.
 - [x] Implement basic UI controls, play, pause, stop, rewind, progress bar, increase/decrease playback speed.
-- [ ] Use the ThemeManager.gd to create a theme resource to simplify development and ensure visual consistency.
+- [x] Implement a theme resource to standardize UI elements.
+- [ ] Establish a two-way API for different solvers and visualizers to show meta data and change parameters.
 - [ ] Implement UI for metadata: active position, cost, search depth, queue length, etc.
 - [ ] Data Bridge: Setup for streaming results from Python (JSON/WebSockets) into the Godot frontend.
 - [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
+
+## 7. Current Task
+Solver ←→ Visualizer Two-way API:
+- [ ] Solvers (grid, graph, 1D array)
+  - [ ] Create "manifest" dictionary, describing input parameters and output metadata.
+    - [ ] Define parsing strategy.
+    - [ ] Input parameters have a label, type, default value, range, maybe expected UI element.
+      - [ ] Define problem context object, containing parsed puzzle input and input parameters
+    - [ ] Define global (state over time), and entity (state per node) outputs.
+      - [ ] Define global data structure, dictionary of packed arrays
+      - [ ] Global data ingested by visual layer.
+      - [ ] Entity data stored in delta trace payload, displayed by tool tip or "inspector" window
+  - Update payload to include spacial metadata for mouse hover context.
+- [ ] Visual Layer
+  - [ ] Build UI from manifest
+    - [ ] Input Parameters
+    - [ ] Output Globals
+    - [ ] Output Entities
+  - [ ] Signal Orchestrator with parameter changes.
+  - [ ] Orchestrator updates problem context, and triggers resolve.
