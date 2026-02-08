@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://dgnqcdr03m2ed" path="res://problems/templates/aoc_base.tscn" id="1_7xwwu"]
 [ext_resource type="Script" uid="uid://cbrg7a0bfixmh" path="res://problems/advent-of-code/aoc-2024/16/day16_solver.gd" id="2_r3ld2"]
-[ext_resource type="Resource" uid="uid://bvmqutetokg7y" path="res://problems/advent-of-code/aoc-2024/16/day16_example.tres" id="3_y2524"]
+[ext_resource type="Resource" uid="uid://bjby7pjumr8y6" path="res://problems/advent-of-code/aoc-2024/16/day16_puzzle_input.tres" id="3_tmm2l"]
 
 [node name="AocBase" instance=ExtResource("1_7xwwu")]
 solver_script = ExtResource("2_r3ld2")
-puzzle_input = ExtResource("3_y2524")
+puzzle_input = ExtResource("3_tmm2l")
