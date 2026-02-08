@@ -1,6 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0l4q4b3pkl8g"]
+[gd_scene load_steps=10 format=3 uid="uid://d0l4q4b3pkl8g"]
 
 [ext_resource type="Script" uid="uid://0vtvo28dacqh" path="res://core/components/ui/playback_controls.gd" id="1_0ba72"]
+[ext_resource type="Texture2D" uid="uid://cqlfg1fkumu3k" path="res://assets/images/icons/mdi-light--rewind.svg" id="2_1jcih"]
+[ext_resource type="Texture2D" uid="uid://dd0gesj7ikkfp" path="res://assets/images/icons/mdi-light--skip-previous.svg" id="3_341hy"]
+[ext_resource type="Texture2D" uid="uid://ibfv5k6vpayc" path="res://assets/images/icons/mdi-light--pause.svg" id="3_jcwfm"]
+[ext_resource type="Texture2D" uid="uid://cm1vanvhq6pky" path="res://assets/images/icons/mdi-light--play.svg" id="4_jcwfm"]
+[ext_resource type="Texture2D" uid="uid://cyrpkc0u08lsl" path="res://assets/images/icons/mdi-light--skip-next.svg" id="5_q7w8k"]
+[ext_resource type="Texture2D" uid="uid://bxlo5ai0ktpf4" path="res://assets/images/icons/mdi-light--fast-forward.svg" id="6_wyeag"]
+[ext_resource type="Texture2D" uid="uid://cd72j7c6ofqqp" path="res://assets/images/icons/mdi-light--stop.svg" id="7_8nm3c"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wml7y"]
 bg_color = Color(0.023529412, 0, 0.27058825, 1)
@@ -20,6 +27,8 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_wml7y")
 script = ExtResource("1_0ba72")
+play_icon = ExtResource("4_jcwfm")
+pause_icon = ExtResource("3_jcwfm")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -34,36 +43,74 @@ layout_mode = 2
 [node name="RewindButton" type="Button" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Rewind"
+icon = ExtResource("2_1jcih")
+
+[node name="StepBackwardButton" type="Button" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_341hy")
 
 [node name="PlayPauseButton" type="Button" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
-text = "Play"
+icon = ExtResource("4_jcwfm")
+
+[node name="StepForwardButton" type="Button" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("5_q7w8k")
+
+[node name="FastForwardButton" type="Button" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("6_wyeag")
 
 [node name="StopButton" type="Button" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Stop"
+icon = ExtResource("7_8nm3c")
 
 [node name="VSeparator" type="VSeparator" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="ElapsedTimeLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="ProgressVBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ElapsedTimeLabel" type="Label" parent="MarginContainer/HBoxContainer/ProgressVBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ElapsedFramesLabel" type="Label" parent="MarginContainer/HBoxContainer/ProgressVBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="TimelineSlider" type="HSlider" parent="MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
 
-[node name="TotalTimeLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="DurationVBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="TotalTimeLabel" type="Label" parent="MarginContainer/HBoxContainer/DurationVBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TotalFramesLabel" type="Label" parent="MarginContainer/HBoxContainer/DurationVBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="VSeparator2" type="VSeparator" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
