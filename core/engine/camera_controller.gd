@@ -7,41 +7,48 @@ extends Camera2D
 @export var pan_speed: float = 1000.0
 
 @export_subgroup("Zooming")
-@export var min_zoom: float = 0.1
-@export var max_zoom: float = 5.0
+@export var min_zoom: float = 0.01
+@export var max_zoom: float = 10.0
 @export var zoom_step: float = 0.15
 
 var _target_zoom: float = 1.0
 var _target_position: Vector2 = Vector2.ZERO
 
-func frame_rect(rect: Rect2, padding: float = 100.0) -> void:
+func frame_rect(rect: Rect2, bottom_offset: float = 0.0, padding: float = 20.0) -> void:
 	if rect.size == Vector2.ZERO:
 		return
 
-	# Use the actual viewport size from the SubViewport
-	var viewport_size = get_viewport().get_visible_rect().size
+	# Use the root viewport size to ensure framing works even if the camera is in a SubViewport.
+	var viewport_size = get_tree().root.get_visible_rect().size
 
 	# Safety check: If the viewport hasn't initialized its size yet,
 	# wait for the next frame or use a default.
 	if viewport_size.x <= 2:
 		print("Warning: Viewport size not initialized. Awaiting next frame.")
 		await get_tree().process_frame
-		viewport_size = get_viewport().get_visible_rect().size
+		viewport_size = get_tree().root.get_visible_rect().size
 
-	var usable_space = viewport_size - Vector2(padding, padding) * 2
+	var usable_space = viewport_size - Vector2(padding, padding) * 2.0
+	# Account for the vertical space taken by the UI bar at the bottom.
+	usable_space.y -= bottom_offset
+
 	var zoom_x = usable_space.x / rect.size.x
 	var zoom_y = usable_space.y / rect.size.y
 
 	_target_zoom = clamp(min(zoom_x, zoom_y), min_zoom, max_zoom)
-	_target_position = rect.get_center()
-	set_process(true)
 
-func frame_node(node: Node2D, padding: float = 100.0) -> void:
-	var rect = Rect2()
+	# To center the grid in the usable area (above the UI), we must shift the
+	# camera's target position. A positive Y offset moves the camera down, making
+	# the content appear higher on screen.
+	var world_y_offset = bottom_offset / (2.0 * _target_zoom)
+	_target_position = rect.get_center() + Vector2(0, world_y_offset)
+
+func frame_node(node: CanvasItem, bottom_offset: float = 0.0, padding: float = 20.0) -> void:
+	var rect: Rect2
 	if node.has_method("get_rect"):
 		var local_rect = node.get_rect()
 		rect = node.get_global_transform() * local_rect
-	frame_rect(rect, padding)
+	frame_rect(rect, bottom_offset, padding)
 	set_process(true)
 
 func _ready() -> void:

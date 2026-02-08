@@ -53,7 +53,7 @@ func _ready() -> void:
 	conductor.set_default_rewind_time(settings.rewind_time)
 
 	# frame the grid_visualizer on screen resize
-	get_tree().root.size_changed.connect(func(): camera.frame_node(grid_visualizer, 100.0))
+	get_tree().root.size_changed.connect(_on_viewport_resized)
 	var initial_data = _solver.parse_input(puzzle_input.text)
 
 	load_problem(initial_data)
@@ -66,16 +66,23 @@ func load_problem(initial_grid: Grid) -> void:
 
 	# Initialize the visualizer with the raw state
 	grid_visualizer.initialize_grid(_grid_data)
-	camera.frame_node(grid_visualizer, 100.0)
+	_frame_grid_with_ui_offset()
 
 	# Run the initial solution
 	_trigger_solve(true)
+
+func _on_viewport_resized() -> void:
+	_frame_grid_with_ui_offset()
+
+func _frame_grid_with_ui_offset() -> void:
+	var ui_height = playback_controls.size.y if playback_controls.visible else 0.0
+	camera.frame_node(grid_visualizer, ui_height)
 
 func _trigger_solve(is_initial_load: bool) -> void:
 	if not _solver:
 		return
 
-	# In a real app, this might be run in a thread to avoid freezing the UI
+	# TODO: run in a thread to avoid freezing the UI
 	var grid_copy = _clone_grid(_grid_data)
 	var new_trace = _solver.solve(grid_copy)
 
