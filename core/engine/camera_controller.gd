@@ -37,9 +37,7 @@ func frame_rect(rect: Rect2, bottom_offset: float = 0.0, padding: float = 20.0) 
 
 	_target_zoom = clamp(min(zoom_x, zoom_y), min_zoom, max_zoom)
 
-	# To center the grid in the usable area (above the UI), we must shift the
-	# camera's target position. A positive Y offset moves the camera down, making
-	# the content appear higher on screen.
+	# Shift the camera down to center the grid above the UI.
 	var world_y_offset = bottom_offset / (2.0 * _target_zoom)
 	_target_position = rect.get_center() + Vector2(0, world_y_offset)
 
