@@ -20,3 +20,14 @@ const ACCENTS: Array = [GREEN, RED, BLUE, PURPLE, YELLOW, ORANGE]
 func _ready():
 	RenderingServer.set_default_clear_color(BACKGROUND)
 	print("ThemeManager initialized with Kintsugi Midnight palette.")
+
+func get_accent_color(color_name: String) -> Color:
+	match color_name:
+		"RED": return ThemeManager.GREEN
+		"ORANGE": return ThemeManager.RED
+		"YELLOW": return ThemeManager.BLUE
+		"GREEN": return ThemeManager.PURPLE
+		"BLUE": return ThemeManager.YELLOW
+		"PURPLE": return ThemeManager.ORANGE
+		"WHITE": return ThemeManager.TEXT_PRIMARY
+	return ThemeManager.TEXT_PRIMARY

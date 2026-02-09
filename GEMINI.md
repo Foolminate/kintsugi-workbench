@@ -124,21 +124,62 @@ Input Event $\rightarrow$ Orchestrator updates Data $\rightarrow$ Solver Regener
 - [ ] Deployment: Structured for Single-Threaded HTML5 export for frictionless internal corporate sharing.
 
 ## 7. Current Task
-Solver ←→ Visualizer Two-way API:
-- [ ] Solvers (grid, graph, 1D array)
-  - [ ] Create "manifest" dictionary, describing input parameters and output metadata.
-    - [ ] Define parsing strategy.
-    - [ ] Input parameters have a label, type, default value, range, maybe expected UI element.
-      - [ ] Define problem context object, containing parsed puzzle input and input parameters
-    - [ ] Define global (state over time), and entity (state per node) outputs.
-      - [ ] Define global data structure, dictionary of packed arrays
-      - [ ] Global data ingested by visual layer.
-      - [ ] Entity data stored in delta trace payload, displayed by tool tip or "inspector" window
-  - Update payload to include spacial metadata for mouse hover context.
-- [ ] Visual Layer
-  - [ ] Build UI from manifest
-    - [ ] Input Parameters
-    - [ ] Output Globals
-    - [ ] Output Entities
-  - [ ] Signal Orchestrator with parameter changes.
-  - [ ] Orchestrator updates problem context, and triggers resolve.
+The following checklist is the focus. Review the checklist, investigate the existing code files, and then guide me through the next logical step of the implementation.
+
+# Checklist: Solver ←→ Visualizer API
+
+### Phase 1: The Core Data Pipeline (MVP)
+*Goal: Establish the data flow from Solver to Trace without fancy UI.*
+- [x] **Define `SolverManifest` Schema**
+    - [x] **Parameters:** Dictionary of `{"name": {"type": TYPE_*, "default": val}}`.
+        - *Scope:* Limit to `INT`, `FLOAT`, `BOOL`.
+    - [x] **Global Metrics:** Dictionary of `{"key": "Label Name"}`.
+        - *Scope:* Pure text output keys.
+    - [x] **Spatial Columns:** Ordered Array of `{"label": "Name", "type": TYPE_*}`.
+        - *Scope:* Defines the tuple structure for grid cells (e.g., `[G, H, Parent]`).
+- [ ] **Implement `PuzzleContext`**
+    - [ ] **Container:** Resource to hold `grid_data` (parsed input) + `parameters` (current values).
+- [ ] **Implement `MetaRecorder`**
+    - [ ] **Storage:** Dictionary mapping `key` $\rightarrow$ `PackedArray`.
+    - [ ] **Record:** `record_step(data_dict)` appends values to arrays.
+    - [ ] **Flush:** Method to return the Dictionary of Arrays when solving finishes.
+- [ ] **Update `Step` & Solver**
+    - [ ] **Spatial Tuple:** Add `var spatial: Array` to `Step` class.
+    - [ ] **Solver Loop:** Update solver to push tuples `[val1, val2]` to the Step, and global stats to `MetaRecorder`.
+- [ ] **Update `Trace`**
+    - [ ] **Storage:** Add `var meta_columns: Dictionary` to hold the arrays from the recorder.
+
+### Phase 2: The Basic UI (MVP)
+*Goal: Visualize the raw data with standard controls.*
+- [ ] **Build `ParameterDock` (Inputs)**
+    - [ ] **Loop:** Iterate manifest `parameters`.
+    - [ ] **Create:** Simple `SpinBox` (numbers) or `CheckBox` (bools).
+    - [ ] **Signal:** Emit `param_changed(key, value)` on change.
+- [ ] **Build `MetadataHUD` (Global Outputs)**
+    - [ ] **Setup:** Create one `Label` node per global metric key.
+    - [ ] **Update:** On `Conductor.step_changed(i)`, set label text to `str(trace.meta_columns[key][i])`.
+- [ ] **Build `TooltipManager` (Entity Outputs)**
+    - [ ] **Cache:** Dictionary `current_spatial_state` (`Vector2i` $\rightarrow$ `Array`).
+    - [ ] **Hover:** On mouse over, lookup tuple, join values with `\n`, and set Tooltip text.
+- [ ] **Basic Re-Solve Loop**
+    - [ ] **Trigger:** On `param_changed` signal.
+    - [ ] **Action:** Update `PuzzleContext`, Trigger `Solver.solve()`, ui updates metadata as the trace is rewound to the divergence point.
+
+### Phase 3: Extended Visuals (Future)
+*Goal: Move from "Debug Text" to "Portfolio Polish".*
+- [ ] **Enhanced `SolverManifest`**
+    - [ ] **Ranges:** Add `[min, max, step]` to parameters for Sliders.
+    - [ ] **Options:** Add `options: []` list for Dropdown menus.
+    - [ ] **Visual Hints:** Add `display: "graph" | "bar"` and `color` to global metrics.
+- [ ] **Advanced `MetadataHUD`**
+    - [ ] **Graph Widget:** Render `PackedArray` data using `Line2D` or custom `draw()` calls.
+    - [ ] **Bar Widget:** Render progress bars for percentage-based metrics.
+- [ ] **Refined `ParameterDock`**
+    - [ ] **Factory:** Support `HSlider`, `OptionButton`, and `ColorPicker`.
+
+### Phase 4: Advanced Workflow (Future)
+*Goal: Frictionless user experience for massive datasets.*
+- [ ] **Smart Hot-Swapping**
+    - [ ] **Signature Check:** Implement `PuzzleContext.get_hash()`.
+    - [ ] **Diffing:** If only a visual parameter changed (e.g., color), do not re-solve logic.
+    - [ ] **State Preservation:** When swapping traces, attempt to keep the Conductor at the same relative percentage or step index, rather than resetting to 0.
