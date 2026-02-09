@@ -62,6 +62,7 @@ func _reverse() -> void:
 
 func _step_backward() -> void:
 	_pause()
+	on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) - 1)
 	step_backward_button.release_focus()
 
@@ -77,6 +78,7 @@ func _pause() -> void:
 
 func _step_forward() -> void:
 	_pause()
+	on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) + 1)
 	step_forward_button.release_focus()
 
