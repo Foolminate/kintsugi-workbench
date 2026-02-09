@@ -137,8 +137,8 @@ The following checklist is the focus. Review the checklist, investigate the exis
         - *Scope:* Pure text output keys.
     - [x] **Spatial Columns:** Ordered Array of `{"label": "Name", "type": TYPE_*}`.
         - *Scope:* Defines the tuple structure for grid cells (e.g., `[G, H, Parent]`).
-- [ ] **Implement `PuzzleContext`**
-    - [ ] **Container:** Resource to hold `grid_data` (parsed input) + `parameters` (current values).
+- [x] **Implement `PuzzleContext`**
+    - [x] **Container:** Resource to hold raw input, the algorithms to parse and to solve it, the API for parameters and metadata.
 - [ ] **Implement `MetaRecorder`**
     - [ ] **Storage:** Dictionary mapping `key` $\rightarrow$ `PackedArray`.
     - [ ] **Record:** `record_step(data_dict)` appends values to arrays.

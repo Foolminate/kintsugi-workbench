@@ -1,8 +1,13 @@
+## Stateless base class for all algorithm solvers.
+## Input Data -> Output Trace.
+##
+## This Resource combines the logic and manifest into a single "solver package".
+## Tightly coupling solver implementations with their API.
 class_name Solver
-extends RefCounted
+extends Resource
 
-## Base class for all algorithm solvers.
-## Designed to be stateless: Input Data -> Output Trace.
+## The parameters and metadata definitions for this solver, used by the UI and MetadataHUD.
+@export var manifest: SolverManifest
 
 ## Parses raw text input into the standardized Grid Data dictionary.
 ##
