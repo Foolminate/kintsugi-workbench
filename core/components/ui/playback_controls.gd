@@ -61,8 +61,9 @@ func _reverse() -> void:
 	play_pause_button.set_pressed_no_signal(true)
 
 func _step_backward() -> void:
-	_pause()
-	on_pause_pressed.emit()
+	if is_playing:
+		_pause()
+		on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) - 1)
 	step_backward_button.release_focus()
 
@@ -77,8 +78,9 @@ func _pause() -> void:
 	play_pause_button.set_pressed_no_signal(false)
 
 func _step_forward() -> void:
-	_pause()
-	on_pause_pressed.emit()
+	if is_playing:
+		_pause()
+		on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) + 1)
 	step_forward_button.release_focus()
 
@@ -94,19 +96,6 @@ func _stop() -> void:
 	on_stop_pressed.emit()
 	stop_button.release_focus()
 
-func _ready() -> void:
-	rewind_button.pressed.connect(_reverse)
-	step_backward_button.pressed.connect(_step_backward)
-	play_pause_button.pressed.connect(_on_play_pause_toggled)
-	step_forward_button.pressed.connect(_step_forward)
-	fast_forward_button.pressed.connect(_fast_forward)
-	stop_button.pressed.connect(_stop)
-	timeline_slider.value_changed.connect(func(value): on_step_requested.emit(int(value)))
-	timeline_slider.drag_ended.connect(func(_v): timeline_slider.release_focus())
-	speed_selector.value_changed.connect(func(value): _on_speed_changed(value))
-
-	set_playback_state(is_playing)
-
 func _on_play_pause_toggled() -> void:
 	if is_playing:
 		on_pause_pressed.emit()
@@ -119,6 +108,23 @@ func _on_speed_changed(value: float) -> void:
 	on_speed_changed.emit(value)
 	elapsed_time_label.text = _format_time(int(timeline_slider.value))
 	total_time_label.text = _format_time(int(timeline_slider.max_value))
+
+func _on_slider_value_changed(value: float) -> void:
+	_pause()
+	on_step_requested.emit(int(value))
+
+func _ready() -> void:
+	rewind_button.pressed.connect(_reverse)
+	step_backward_button.pressed.connect(_step_backward)
+	play_pause_button.pressed.connect(_on_play_pause_toggled)
+	step_forward_button.pressed.connect(_step_forward)
+	fast_forward_button.pressed.connect(_fast_forward)
+	stop_button.pressed.connect(_stop)
+	timeline_slider.value_changed.connect(_on_slider_value_changed)
+	timeline_slider.drag_ended.connect(func(_v): timeline_slider.release_focus())
+	speed_selector.value_changed.connect(_on_speed_changed)
+
+	set_playback_state(is_playing)
 
 func _format_time(step: int) -> String:
 	var total_seconds = int((step + 1) / speed_selector.value)
