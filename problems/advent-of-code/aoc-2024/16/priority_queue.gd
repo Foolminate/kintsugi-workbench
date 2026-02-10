@@ -6,6 +6,9 @@ extends RefCounted
 
 var _heap: Array = []
 
+func depth() -> int:
+	return _heap.size()
+
 func push(priority: float, data: Variant) -> void:
 	_heap.append([priority, data])
 	_sift_up(_heap.size() - 1)

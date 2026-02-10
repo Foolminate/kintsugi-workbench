@@ -139,15 +139,15 @@ The following checklist is the focus. Review the checklist, investigate the exis
         - *Scope:* Defines the tuple structure for grid cells (e.g., `[G, H, Parent]`).
 - [x] **Implement `PuzzleContext`**
     - [x] **Container:** Resource to hold raw input, the algorithms to parse and to solve it, the API for parameters and metadata.
-- [ ] **Implement `MetaRecorder`**
-    - [ ] **Storage:** Dictionary mapping `key` $\rightarrow$ `PackedArray`.
-    - [ ] **Record:** `record_step(data_dict)` appends values to arrays.
-    - [ ] **Flush:** Method to return the Dictionary of Arrays when solving finishes.
-- [ ] **Update `Step` & Solver**
-    - [ ] **Spatial Tuple:** Add `var spatial: Array` to `Step` class.
-    - [ ] **Solver Loop:** Update solver to push tuples `[val1, val2]` to the Step, and global stats to `MetaRecorder`.
-- [ ] **Update `Trace`**
-    - [ ] **Storage:** Add `var meta_columns: Dictionary` to hold the arrays from the recorder.
+- [x] **Implement `MetaRecorder`**
+    - [x] **Storage:** Dictionary mapping `key` $\rightarrow$ `PackedArray`.
+    - [x] **Record:** `record_step(data_dict)` appends values to arrays.
+    - [x] **Flush:** Method to return the Dictionary of Arrays when solving finishes.
+- [x] **Update `Step` & Solver**
+    - [x] **Spatial Tuple:** Add `var spatial: Array` to `Step` class.
+    - [x] **Solver Loop:** Update solver to push tuples `[val1, val2]` to the Step, and global stats to `MetaRecorder`.
+- [x] **Update `Trace`**
+    - [x] **Storage:** Add `var meta_columns: Dictionary` to hold the arrays from the recorder.
 
 ### Phase 2: The Basic UI (MVP)
 *Goal: Visualize the raw data with standard controls.*

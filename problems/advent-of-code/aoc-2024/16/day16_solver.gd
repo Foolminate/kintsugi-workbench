@@ -37,8 +37,7 @@ func parse_input(_input_text: String) -> Grid:
 
 	return grid
 
-func solve(grid: Grid) -> Array[Step]:
-	var trace: Array[Step] = []
+func _run(grid: Grid) -> void:
 	var pq = PriorityQueue.new()
 	var visited: Dictionary = {} # Key: Vector3i(x, y, dir_idx), Value: cost
 
@@ -46,11 +45,13 @@ func solve(grid: Grid) -> Array[Step]:
 	var start_dir = Vector2i.RIGHT
 	var start_node = SearchNode.new(grid.start, start_dir, 0)
 	pq.push(0, start_node)
+	var depth: int = 1
 
 	var final_node: SearchNode = null
 
 	while not pq.is_empty():
 		var current: SearchNode = pq.pop()
+		depth = pq.depth()
 
 		var dir_idx = _get_dir_index(current.dir)
 		var state_key = Vector3i(current.pos.x, current.pos.y, dir_idx)
@@ -61,13 +62,13 @@ func solve(grid: Grid) -> Array[Step]:
 
 		# Trace: Current
 		var current_state = grid.cells.get(current.pos, Enums.CellState.EMPTY)
-		trace.append(create_step(Enums.StepType.GRID_UPDATE, current.pos, Enums.CellState.ACTIVE, current_state))
+		commit_step(Enums.StepType.GRID_UPDATE, current.pos, [Enums.CellState.ACTIVE, current.cost], current_state, [depth])
 		if current_state != Enums.CellState.START and current_state != Enums.CellState.END:
-			grid.cells[current.pos] = Enums.CellState.ACTIVE
+			grid.cells[current.pos] = [Enums.CellState.ACTIVE, current.cost]
 
 		if current.pos == grid.end:
 			final_node = current
-			trace.append(create_step(Enums.StepType.LOG_MESSAGE, current.pos, "Target Reached! Cost: %d" % current.cost, null))
+			commit_step(Enums.StepType.LOG_MESSAGE, current.pos, "Target Reached! Cost: %d" % current.cost, null, [depth])
 			break
 
 		# Explore all 4 directions
@@ -79,26 +80,26 @@ func solve(grid: Grid) -> Array[Step]:
 			var next_pos = current.pos + move_dir
 			var turn_cost = _calculate_turn_cost(current.dir, move_dir)
 			var next_node = SearchNode.new(next_pos, move_dir, current.cost + 1 + turn_cost, current)
-			_try_queue(pq, visited, next_node, trace, grid.cells)
+			_try_queue(pq, visited, next_node, grid.cells)
 
 		# Trace: Visited
-		trace.append(create_step(Enums.StepType.GRID_UPDATE, current.pos, Enums.CellState.VISITED, Enums.CellState.ACTIVE))
-		if current_state != Enums.CellState.START:
-			grid.cells[current.pos] = Enums.CellState.VISITED
+		current_state = grid.cells.get(current.pos, Enums.CellState.EMPTY)
+		commit_step(Enums.StepType.GRID_UPDATE, current.pos, [Enums.CellState.VISITED, current.cost], current_state, [depth])
+		if current_state[0] != Enums.CellState.START:
+			grid.cells[current.pos] = [Enums.CellState.VISITED, current.cost]
 
+	depth = pq.depth()
 	# Reconstruct Path
 	if final_node:
 		var ptr = final_node
 		while ptr:
 			# Now we can trust the grid to hold the correct state (VISITED, QUEUED, etc.)
-			var undo_state = grid.cells.get(ptr.pos, Enums.CellState.EMPTY)
+			var undo_state = grid.cells.get(ptr.pos, [Enums.CellState.EMPTY, 0])
 
-			trace.append(create_step(Enums.StepType.GRID_UPDATE, ptr.pos, Enums.CellState.ACTIVE, undo_state))
+			commit_step(Enums.StepType.GRID_UPDATE, ptr.pos, [Enums.CellState.ACTIVE, ptr.cost], undo_state, [depth])
 			ptr = ptr.parent
 
-	return trace
-
-func _try_queue(pq: PriorityQueue, visited: Dictionary, node: SearchNode, trace: Array[Step], grid_data: Dictionary) -> void:
+func _try_queue(pq: PriorityQueue, visited: Dictionary, node: SearchNode, grid_data: Dictionary) -> void:
 	if grid_data.get(node.pos, Enums.CellState.WALL) == Enums.CellState.WALL:
 		return
 
@@ -109,10 +110,10 @@ func _try_queue(pq: PriorityQueue, visited: Dictionary, node: SearchNode, trace:
 		return
 
 	pq.push(node.cost, node)
-	var current_state = grid_data.get(node.pos, Enums.CellState.EMPTY)
-	trace.append(create_step(Enums.StepType.GRID_UPDATE, node.pos, Enums.CellState.QUEUED, current_state))
-	if current_state != Enums.CellState.START:
-		grid_data[node.pos] = Enums.CellState.QUEUED
+	var current_state = grid_data.get(node.pos, [Enums.CellState.EMPTY, 0])
+	commit_step(Enums.StepType.GRID_UPDATE, node.pos, [Enums.CellState.QUEUED, node.cost], current_state, [pq.depth])
+	if current_state[0] != Enums.CellState.START:
+		grid_data[node.pos] = [Enums.CellState.QUEUED, node.cost]
 
 # TODO: Make this adjustable on the fly, trigger a rewind and divergence resolution if changed mid-playback
 func _calculate_turn_cost(current_dir: Vector2i, new_dir: Vector2i) -> int:

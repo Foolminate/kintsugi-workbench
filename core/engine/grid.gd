@@ -6,7 +6,7 @@ extends Resource
 
 var width: int = 0
 var height: int = 0
-var cells: Dictionary = {} # Key: Vector2i, Value: Enums.CellState (int)
+var cells: Dictionary = {} # Key: Vector2i, Value: [Enums.CellState (int), spatial data as defined by SolverManifest]
 
 var start: Vector2i = Vector2i(-1, -1)
 var end: Vector2i = Vector2i(-1, -1)
