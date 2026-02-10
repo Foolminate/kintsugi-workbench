@@ -1,5 +1,6 @@
 extends PanelContainer
 
+#region Signals and Initialization
 signal on_play_pressed()
 signal on_pause_pressed()
 signal on_stop_pressed()
@@ -22,14 +23,15 @@ signal on_speed_changed(new_speed: float)
 @onready var total_frames_label: Label = %TotalFramesLabel
 # Playback Speed
 @onready var speed_selector: SpinBox = %SpeedSelector
+#endregion
 
 @export var play_icon: Texture2D
 @export var pause_icon: Texture2D
 
-var is_playing: bool = false
+var _is_playing: bool = false
 
 func set_playback_state(playing: bool) -> void:
-	is_playing = playing
+	_is_playing = playing
 	if playing: _play()
 	else: _pause()
 
@@ -61,7 +63,7 @@ func _reverse() -> void:
 	play_pause_button.set_pressed_no_signal(true)
 
 func _step_backward() -> void:
-	if is_playing:
+	if _is_playing:
 		_pause()
 		on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) - 1)
@@ -78,7 +80,7 @@ func _pause() -> void:
 	play_pause_button.set_pressed_no_signal(false)
 
 func _step_forward() -> void:
-	if is_playing:
+	if _is_playing:
 		_pause()
 		on_pause_pressed.emit()
 	on_step_requested.emit(int(timeline_slider.value) + 1)
@@ -86,7 +88,7 @@ func _step_forward() -> void:
 
 func _fast_forward() -> void:
 	speed_selector.value *= 2
-	if not is_playing:
+	if not _is_playing:
 		on_play_pressed.emit()
 		_play()
 	fast_forward_button.release_focus()
@@ -97,7 +99,7 @@ func _stop() -> void:
 	stop_button.release_focus()
 
 func _on_play_pause_toggled() -> void:
-	if is_playing:
+	if _is_playing:
 		on_pause_pressed.emit()
 		_pause()
 	else:
@@ -113,6 +115,13 @@ func _on_slider_value_changed(value: float) -> void:
 	_pause()
 	on_step_requested.emit(int(value))
 
+func _format_time(step: int) -> String:
+	var total_seconds = int((step + 1) / speed_selector.value)
+	@warning_ignore("integer_division")
+	var minutes = total_seconds / 60
+	var seconds = total_seconds % 60
+	return "%02d:%02d" % [minutes, seconds]
+
 func _ready() -> void:
 	rewind_button.pressed.connect(_reverse)
 	step_backward_button.pressed.connect(_step_backward)
@@ -124,11 +133,4 @@ func _ready() -> void:
 	timeline_slider.drag_ended.connect(func(_v): timeline_slider.release_focus())
 	speed_selector.value_changed.connect(_on_speed_changed)
 
-	set_playback_state(is_playing)
-
-func _format_time(step: int) -> String:
-	var total_seconds = int((step + 1) / speed_selector.value)
-	@warning_ignore("integer_division")
-	var minutes = total_seconds / 60
-	var seconds = total_seconds % 60
-	return "%02d:%02d" % [minutes, seconds]
+	set_playback_state(_is_playing)

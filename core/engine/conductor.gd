@@ -1,6 +1,7 @@
 class_name Conductor
 extends Node
 
+#region Signals
 signal on_stepped_forward(step: Step)
 signal on_stepped_backward(step: Step)
 signal on_timeline_changed(current_index: int, total_steps: int)
@@ -10,6 +11,7 @@ signal on_playback_state_changed(is_playing: bool)
 signal on_playback_speed_changed(new_speed: float)
 signal on_divergence_resolution_started()
 signal on_divergence_resolution_finished()
+#endregion
 
 var _trace: Array[Step] = []
 var _head: int = -1
@@ -55,7 +57,6 @@ func play() -> void:
     _playback_direction = 1
     on_playback_state_changed.emit(_is_playing)
 
-# TODO: pause with spacebar
 func pause() -> void:
     _is_playing = false
     on_playback_state_changed.emit(_is_playing)
@@ -111,7 +112,7 @@ func _start_divergence_resolution(divergence_index: int) -> void:
     _rewind_target_index = divergence_index - 1
     var rewind_speed = ceil((_head - _rewind_target_index) / _divergence_rewind_time) # Aim to rewind in ~2 seconds at 60fps
     _saved_speed = _playback_speed
-    _playback_speed = max(_playback_speed, rewind_speed) # Accelerated rewind
+    _playback_speed = max(_playback_speed, rewind_speed)
     on_playback_speed_changed.emit(_playback_speed)
 
     on_divergence_resolution_started.emit()

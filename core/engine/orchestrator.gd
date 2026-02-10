@@ -2,7 +2,6 @@ class_name Orchestrator
 extends Control
 
 ## The central hub connecting Logic (Solver), Data (Grid), and View (Visualizer).
-## It manages the "Source of Truth" for the grid and coordinates the hot-swap workflow.
 
 @onready var camera: Camera2D = %CameraMain
 @onready var grid_visualizer: GridVisualizer = %GridVisualizer
