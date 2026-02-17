@@ -59,7 +59,7 @@ func _init(manifest: SolverManifest) -> void:
 				_columns[i] = arr
 			_: push_error("Unsupported metric type in MetaRecorder: %s" % str(metric.type))
 
-func _get_default_value(type: int) -> Variant:
+func _get_default_value(type: Variant.Type) -> Variant:
 	match type:
 		TYPE_BOOL: return false
 		TYPE_INT: return 0
